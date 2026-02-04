@@ -501,3 +501,27 @@ export const jobPostings: JobPosting[] = [
     greenFlags: ["EM role", "Fintech", "Team growth stage"],
   },
 ];
+
+export function nameToSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}
+
+export function getCompanyBySlug(slug: string): (typeof companies)[number] | undefined {
+  return companies.find((c) => nameToSlug(c.name) === slug);
+}
+
+export function getJobsByCompanyId(companyId: string): JobPosting[] {
+  return jobPostings.filter((j) => j.companyId === companyId);
+}
+
+export function getJobById(id: string): JobPosting | undefined {
+  return jobPostings.find((j) => j.id === id);
+}
+
+export function getJobsByIds(ids: string[]): JobPosting[] {
+  const set = new Set(ids);
+  return jobPostings.filter((j) => set.has(j.id));
+}

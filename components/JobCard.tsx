@@ -1,12 +1,14 @@
+"use client";
+
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RemoteType } from "@/lib/types";
+import { useSavedJobs } from "@/lib/SavedJobsContext";
 import { cn } from "@/lib/utils";
 import {
   MapPin,
@@ -17,6 +19,7 @@ import {
   Calendar,
   AlertTriangle,
   CheckCircle2,
+  Heart,
 } from "lucide-react";
 
 export interface JobCardProps {
@@ -79,6 +82,8 @@ function remoteTypeLabel(type: RemoteType): string {
 export function JobCard({ job, companyName, className }: JobCardProps) {
   const displayCompanyName =
     job.company?.name ?? companyName ?? "—";
+  const { has, toggle } = useSavedJobs();
+  const saved = has(job.id);
 
   return (
     <Card className={cn("flex flex-col", className)}>
@@ -87,15 +92,37 @@ export function JobCard({ job, companyName, className }: JobCardProps) {
           <CardTitle className="text-lg leading-tight">{job.title}</CardTitle>
           <p className="text-muted-foreground text-sm">{displayCompanyName}</p>
         </div>
-        <Badge
-          variant="outline"
-          className={cn(
-            "shrink-0 border px-3 py-1 text-base font-semibold tabular-nums",
-            ghostScoreBgClass(job.ghostScore)
-          )}
-        >
-          {job.ghostScore}/10
-        </Badge>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggle(job.id);
+            }}
+            className={cn(
+              "rounded-full p-1.5 transition-colors hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              saved
+                ? "text-red-500 fill-red-500 dark:text-red-400 dark:fill-red-400"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+            aria-label={saved ? "Unsave job" : "Save job"}
+          >
+            <Heart
+              className={cn("size-5", saved && "fill-current")}
+              strokeWidth={saved ? 0 : 1.5}
+            />
+          </button>
+          <Badge
+            variant="outline"
+            className={cn(
+              "border px-3 py-1 text-base font-semibold tabular-nums",
+              ghostScoreBgClass(job.ghostScore)
+            )}
+          >
+            {job.ghostScore}/10
+          </Badge>
+        </div>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-3 pt-0">
