@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  savedJobs SavedJob[]
+}
+
+model Company {
+  id         String @id @default(cuid())
+  name       String @unique
+  ghostScore Int
+  logo       String
+  
+  jobs Job[]
+}
+
+model Job {
+  id         String   @id @default(cuid())
+  title      String
+  companyId  String
+  location   String
+  salaryMin  Int
+  salaryMax  Int
+  techStack  String[]
+  daysPosted Int
+  ghostScore Int
+  redFlags   String[]
+  greenFlags String[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  company Company @relation(fields: [companyId], references: [id])
+  savedBy SavedJob[]
+  
+  @@index([ghostScore])
+  @@index([daysPosted])
+  @@index([companyId])
+}
+
+model SavedJob {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  notes     String?
+  status    String   @default("saved") // "saved", "applied", "interviewing", "rejected", "accepted"
+  
+  userId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  jobId String
+  job   Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, jobId])
+}

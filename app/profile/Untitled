@@ -1,0 +1,10 @@
+export default function ProfilePage() {
+  // TODO: Fetch user data and saved jobs
+
+  return (
+    <div>
+      <h1>Profile</h1>
+      {/* Build your UI here */}
+    </div>
+  )
+}

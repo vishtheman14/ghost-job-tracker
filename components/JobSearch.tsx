@@ -21,6 +21,7 @@ const TECH_OPTIONS = [
   "Node.js",
   "Go",
   "Ruby",
+  ".NET",
   "Java",
   "PostgreSQL",
   "MongoDB",
